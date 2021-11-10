@@ -21,3 +21,6 @@ auth:
   ## @param auth.database Name for a custom database to create
   ## ref: https://github.com/bitnami/bitnami-docker-mysql/blob/master/README.md#creating-a-database-on-first-run
   database: service_instance_db
+primary:
+  persistence:
+    size: 2Gi

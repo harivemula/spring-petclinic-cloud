@@ -19,7 +19,7 @@ spec:
         app: customers-service
     spec:
       containers:
-      - image: ${REPOSITORY_PREFIX}/spring-petclinic-cloud-customers-service:latest
+      - image: ${REPOSITORY_PREFIX}/spring-petclinic-customers-service:latest
         name: customers-service
         imagePullPolicy: Always
         livenessProbe:
@@ -55,8 +55,12 @@ spec:
              secretKeyRef:
                name: customers-db-mysql
                key: mysql-root-password
-        - name: MANAGEMENT_METRICS_EXPORT_WAVEFRONT_URI
-          value: proxy://wavefront-proxy.spring-petclinic.svc.cluster.local:2878
+        - name: MANAGEMENT_METRICS_EXPORT_WAVEFRONT_ENABLED
+          value: "false"
+        - name: SPRING_ZIPKIN_BASEURL
+          value: http://zipkin.ops.svc:9411          
+#        - name: MANAGEMENT_METRICS_EXPORT_WAVEFRONT_URI
+#          value: proxy://wavefront-proxy.spring-petclinic.svc.cluster.local:2878
         ports:
         - containerPort: 8080
         resources: {}

@@ -1,0 +1,63 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: api-gateway-sm
+spec:
+  selector:
+    matchLabels:
+      app: api-gateway
+  namespaceSelector:
+    matchNames:
+    - spring-petclinic
+  endpoints:
+  - port: "80"  #name as per the service
+    path: "/actuator/prometheus"
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: customers-service-sm
+spec:
+  selector:
+    matchLabels:
+      app: customers-service
+  namespaceSelector:
+    matchNames:
+    - spring-petclinic
+  endpoints:
+  - port: "8080"  #name as per the service
+    path: "/actuator/prometheus"
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: vets-service-sm
+spec:
+  selector:
+    matchLabels:
+      app: vets-service
+  namespaceSelector:
+    matchNames:
+    - spring-petclinic
+  endpoints:
+  - port: "8080"  #name as per the service
+    path: "/actuator/prometheus"
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: visits-service-sm
+spec:
+  selector:
+    matchLabels:
+      app: visits-service
+  namespaceSelector:
+    matchNames:
+    - spring-petclinic
+  endpoints:
+  - port: "8080"  #name as per the service
+    path: "/actuator/prometheus"

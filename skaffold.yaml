@@ -67,7 +67,7 @@ deploy:
   kubectl:
     manifests:
     - k8s/init-namespace/01-namespace.yaml
-    - k8s/init-namespace/02-regcreds.yaml
+    #- k8s/init-namespace/02-regcreds.yaml
     - k8s/init-services/02-config-map.yaml
     - k8s/init-services/03-role.yaml
     #- k8s/init-services/04-wavefront.yaml
@@ -75,8 +75,9 @@ deploy:
     - k8s/init-services/06-customers-service-service.yaml
     - k8s/init-services/07-vets-service-service.yaml
     - k8s/init-services/08-visits-service-service.yaml
-    - k8s/api-gateway-deployment.yaml
-    - k8s/customers-service-deployment.yaml
-    - k8s/vets-service-deployment.yaml
-    - k8s/visits-service-deployment.yaml
+    #- k8s/api-gateway-deployment.yaml
+    #- k8s/customers-service-deployment.yaml
+    #- k8s/vets-service-deployment.yaml
+    #- k8s/visits-service-deployment.yaml
+    # need to set REPOSITORY_PREFIX, so running manually for now with deploytokubernetes.sh or " cat ./k8s/*.yaml | sed 's#\${REPOSITORY_PREFIX}'"#${REPOSITORY_PREFIX}#g" | kubectl apply -n spring-petclinic -f -"
   
