@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.customers.model.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,11 @@ class PetResource {
     private final PetRepository petRepository;
     private final OwnerRepository ownerRepository;
 
+    @Value("${test.add.delay.enabled:false}")
+    boolean addDelay;
+
+    @Value("${test.add.delay.seconds:3}")
+    int delaySec;
 
     @GetMapping("/petTypes")
     public List<PetType> getPetTypes() {
@@ -87,6 +93,16 @@ class PetResource {
 
 
     private Pet findPetById(int petId) {
+
+        if (addDelay) {
+            log.info("forced sleep...");
+            try {
+                Thread.sleep(delaySec*1000);
+            } catch (Exception e) {}
+            
+        }
+
+
         Optional<Pet> pet = petRepository.findById(petId);
         if (!pet.isPresent()) {
             throw new ResourceNotFoundException("Pet "+petId+" not found");

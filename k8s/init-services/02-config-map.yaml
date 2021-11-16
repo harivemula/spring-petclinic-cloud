@@ -51,6 +51,8 @@ data:
             enabled: true
           wavefront:
             enabled: false
+        distribution:
+            slo: true
 
     customers-service-id: http://customers-service.spring-petclinic.svc.cluster.local:8080
     visits-service-id: http://vists-service.spring-petclinic.svc.cluster.local:8080
