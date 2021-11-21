@@ -85,6 +85,11 @@ class PetResource {
         Owner owner = optionalOwner.orElseThrow(() -> new ResourceNotFoundException("Owner "+ownerId+" not found"));
         owner.addPet(pet);
         
+
+        //Hari
+        Counter counter = metricCounters.get(petRequest.getTypeId());
+        counter.increment();
+
         return save(pet, petRequest);
     }
 
@@ -106,9 +111,7 @@ class PetResource {
 
         log.info("Saving pet {}", pet);
 
-        //Hari
-        Counter counter = metricCounters.get(petRequest.getTypeId());
-        counter.increment();
+
 
 
         return petRepository.save(pet);
