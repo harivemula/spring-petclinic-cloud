@@ -21,9 +21,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.customers.model.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import io.micrometer.core.instrument.Counter;
+//Hari
+import io.micrometer.core.instrument.MeterRegistry;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,14 +45,29 @@ import java.util.Optional;
 @Slf4j
 class PetResource {
 
-    private final PetRepository petRepository;
-    private final OwnerRepository ownerRepository;
+    private PetRepository petRepository;
+    private OwnerRepository ownerRepository;
+
+    private Map<Integer, Counter> metricCounters = null;
+
+    //@Autowired
+    private MeterRegistry meterRegistry;
 
     @Value("${test.add.delay.enabled:false}")
     boolean addDelay;
 
     @Value("${test.add.delay.seconds:3}")
     int delaySec;
+
+    @Autowired
+    public PetResource(MeterRegistry meterRegistry, PetRepository petRepository, OwnerRepository ownerRepository) {
+        this.meterRegistry = meterRegistry;
+        this.petRepository = petRepository;
+        this.ownerRepository = ownerRepository;
+        initPetCounters();
+    }
+
+
 
     @GetMapping("/petTypes")
     public List<PetType> getPetTypes() {
@@ -62,7 +84,7 @@ class PetResource {
         final Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
         Owner owner = optionalOwner.orElseThrow(() -> new ResourceNotFoundException("Owner "+ownerId+" not found"));
         owner.addPet(pet);
-
+        
         return save(pet, petRequest);
     }
 
@@ -83,6 +105,12 @@ class PetResource {
             .ifPresent(pet::setType);
 
         log.info("Saving pet {}", pet);
+
+        //Hari
+        Counter counter = metricCounters.get(petRequest.getTypeId());
+        counter.increment();
+
+
         return petRepository.save(pet);
     }
 
@@ -109,5 +137,20 @@ class PetResource {
         }
         return pet.get();
     }
+
+
+    private void initPetCounters() {
+        List<PetType> petTypes = this.getPetTypes();
+        metricCounters = new HashMap<Integer, Counter>();
+
+        for (PetType petType : petTypes) {
+            Counter petCounter = Counter.builder("pets.by.type")
+                                    .tag("type", petType.getName())
+                                    .description("Number of Pets created by type")
+                                    .register(meterRegistry);
+             metricCounters.put(petType.getId(), petCounter);
+        }
+    }
+
 
 }
